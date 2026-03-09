@@ -55,7 +55,10 @@
       "Bash(head -5 \"C:/Users/adamd/Desktop/dominion/logo1 \\(1\\).svg\")",
       "Bash(npx sharp-cli --version)",
       "Bash(node -e \":*)",
-      "Bash(git add public/icons/apple-touch-icon.png public/icons/favicon-16x16.png public/icons/favicon-32x32.png public/icons/icon-192.png public/icons/icon-512.png src/app/layout.tsx)"
+      "Bash(git add public/icons/apple-touch-icon.png public/icons/favicon-16x16.png public/icons/favicon-32x32.png public/icons/icon-192.png public/icons/icon-512.png src/app/layout.tsx)",
+      "Bash(git branch -d fix/seo-canonical-jsonld)",
+      "Bash(git push origin --delete fix/seo-canonical-jsonld)",
+      "Bash(git push origin --delete master)"
     ]
   }
 }
