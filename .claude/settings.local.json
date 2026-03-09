@@ -39,7 +39,10 @@
       "Bash(taskkill /PID 30616 /F)",
       "Bash(powershell -Command \"Stop-Process -Id 30616 -Force\")",
       "Bash(git add src/app/sell/page.tsx src/lib/tracking.ts .env.example src/app/analytics.tsx src/components/forms/LeadForm.tsx src/lib/constants.ts src/app/page.tsx src/app/about/page.tsx src/app/how-we-work/page.tsx \"src/app/neighborhoods/[slug]/page.tsx\" src/app/neighborhoods/page.tsx src/app/structured-data.tsx src/components/sections/Testimonials.tsx src/app/api/leads/route.ts src/app/api/leads/route.ts.ts .claude/)",
-      "Bash(git add .gitignore services/proposals/spokane-seller-search.ts app/operator/proposals/page.tsx app/operator/proposals/review-client.tsx .claude/settings.local.json DOMINION_ADS_STATUS.md app/api/proposals/ database/queries/proposals.ts)"
+      "Bash(git add .gitignore services/proposals/spokane-seller-search.ts app/operator/proposals/page.tsx app/operator/proposals/review-client.tsx .claude/settings.local.json DOMINION_ADS_STATUS.md app/api/proposals/ database/queries/proposals.ts)",
+      "Bash(Investor\" with \"Local Spokane Buyer\", fix over-limit descriptions:*)",
+      "Bash(git push origin main)",
+      "Bash(git add .claude/settings.local.json)"
     ]
   }
 }
