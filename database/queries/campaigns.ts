@@ -2,54 +2,61 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Campaign, AdGroup, Keyword } from '../../types/ads';
 import type { Market } from '../../types/markets';
 
+// ---------------------------------------------------------------------------
+// Upserts — all return the internal database ID
+// ---------------------------------------------------------------------------
+
 export async function upsertCampaign(
   supabase: SupabaseClient,
   data: Omit<Campaign, 'id' | 'created_at' | 'updated_at'>
-) {
-  const { error } = await supabase
+): Promise<number> {
+  const { data: row, error } = await supabase
     .from('campaigns')
     .upsert(
       { ...data, updated_at: new Date().toISOString() },
       { onConflict: 'google_campaign_id' }
-    );
+    )
+    .select('id')
+    .single();
   if (error) throw error;
+  return row.id;
 }
 
 export async function upsertAdGroup(
   supabase: SupabaseClient,
   data: Omit<AdGroup, 'id' | 'created_at' | 'updated_at'>
-) {
-  const { error } = await supabase
+): Promise<number> {
+  const { data: row, error } = await supabase
     .from('ad_groups')
     .upsert(
       { ...data, updated_at: new Date().toISOString() },
       { onConflict: 'google_ad_group_id' }
-    );
+    )
+    .select('id')
+    .single();
   if (error) throw error;
+  return row.id;
 }
 
 export async function upsertKeyword(
   supabase: SupabaseClient,
   data: Omit<Keyword, 'id' | 'created_at' | 'updated_at'>
-) {
-  const { error } = await supabase
+): Promise<number> {
+  const { data: row, error } = await supabase
     .from('keywords')
     .upsert(
       { ...data, updated_at: new Date().toISOString() },
       { onConflict: 'google_keyword_id' }
-    );
+    )
+    .select('id')
+    .single();
   if (error) throw error;
+  return row.id;
 }
 
-export async function getCampaignsByMarket(supabase: SupabaseClient, market: Market) {
-  const { data, error } = await supabase
-    .from('campaigns')
-    .select('*')
-    .eq('market', market)
-    .order('name');
-  if (error) throw error;
-  return data as Campaign[];
-}
+// ---------------------------------------------------------------------------
+// Google ID → internal ID lookups
+// ---------------------------------------------------------------------------
 
 export async function getCampaignIdByGoogleId(
   supabase: SupabaseClient,
@@ -62,4 +69,44 @@ export async function getCampaignIdByGoogleId(
     .single();
   if (error) return null;
   return data?.id ?? null;
+}
+
+export async function getAdGroupIdByGoogleId(
+  supabase: SupabaseClient,
+  googleAdGroupId: string
+): Promise<number | null> {
+  const { data, error } = await supabase
+    .from('ad_groups')
+    .select('id')
+    .eq('google_ad_group_id', googleAdGroupId)
+    .single();
+  if (error) return null;
+  return data?.id ?? null;
+}
+
+export async function getKeywordIdByGoogleId(
+  supabase: SupabaseClient,
+  googleKeywordId: string
+): Promise<number | null> {
+  const { data, error } = await supabase
+    .from('keywords')
+    .select('id')
+    .eq('google_keyword_id', googleKeywordId)
+    .single();
+  if (error) return null;
+  return data?.id ?? null;
+}
+
+// ---------------------------------------------------------------------------
+// Read queries
+// ---------------------------------------------------------------------------
+
+export async function getCampaignsByMarket(supabase: SupabaseClient, market: Market) {
+  const { data, error } = await supabase
+    .from('campaigns')
+    .select('*')
+    .eq('market', market)
+    .order('name');
+  if (error) throw error;
+  return data as Campaign[];
 }

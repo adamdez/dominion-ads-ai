@@ -1,4 +1,5 @@
-import type { Market, SellerSituation } from './markets';
+import type { Market } from './markets';
+import type { SellerSituation } from './seller-situations';
 
 export interface Campaign {
   id: number;
@@ -42,6 +43,11 @@ export interface SearchTerm {
   market: Market | null;
   seller_situation: SellerSituation | null;
   intent_label: string | null;
+  impressions: number;
+  clicks: number;
+  cost_micros: number;
+  conversions: number;
+  conversion_value_micros: number;
   is_waste: boolean;
   is_opportunity: boolean;
   first_seen_at: string;
