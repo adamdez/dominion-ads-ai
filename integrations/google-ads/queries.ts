@@ -1,8 +1,15 @@
 /**
- * GAQL query templates for Google Ads API.
- * These will be used by the client to fetch data.
- * Exact field names follow the Google Ads API resource reference.
+ * GAQL query templates for the Google Ads REST API (v23).
+ *
+ * Field names follow the Google Ads API resource reference.
+ * Important: the REST API returns camelCase JSON keys, so the client
+ * must map them to our snake_case row types.
+ *
+ * All queries select explicit IDs (campaign.id, ad_group.id) instead
+ * of resource-name references (ad_group.campaign) to simplify parsing.
  */
+
+// ── Structural queries (no date range) ──────────────────────────
 
 export const CAMPAIGN_QUERY = `
   SELECT
@@ -19,7 +26,7 @@ export const AD_GROUP_QUERY = `
     ad_group.id,
     ad_group.name,
     ad_group.status,
-    ad_group.campaign
+    campaign.id
   FROM ad_group
   WHERE ad_group.status != 'REMOVED'
 `;
@@ -30,19 +37,25 @@ export const KEYWORD_QUERY = `
     ad_group_criterion.keyword.text,
     ad_group_criterion.keyword.match_type,
     ad_group_criterion.status,
-    ad_group_criterion.ad_group
+    ad_group.id,
+    campaign.id
   FROM ad_group_criterion
   WHERE ad_group_criterion.type = 'KEYWORD'
     AND ad_group_criterion.status != 'REMOVED'
 `;
 
+// ── Date-ranged queries ─────────────────────────────────────────
+
 export function searchTermQuery(startDate: string, endDate: string): string {
+  // NOTE: ad_group_criterion fields are NOT selectable from search_term_view.
+  // The keyword_id link is resolved via segments.keyword.ad_group_criterion
+  // resource name parsing in the client mapper.
   return `
     SELECT
       search_term_view.search_term,
       campaign.id,
       ad_group.id,
-      segments.keyword.info.text,
+      segments.keyword.ad_group_criterion,
       metrics.impressions,
       metrics.clicks,
       metrics.cost_micros,

@@ -11,6 +11,13 @@ const DECISION_TO_STATUS: Record<ApprovalDecision, RecommendationStatus> = {
   deferred: 'pending',
 };
 
+// TODO: Non-transactional — insertApproval() and updateRecommendationStatus()
+// are separate queries. If the status update fails after the approval is inserted,
+// the system is in an inconsistent state. Wrap in a Supabase RPC transaction
+// (or a Postgres function) when available.
+// TODO: No idempotency guard — calling recordApproval() twice for the same
+// recommendation creates two approval rows. Consider checking current status
+// before inserting (e.g. reject if already approved/ignored).
 export async function recordApproval(
   supabase: SupabaseClient,
   recommendationId: number,

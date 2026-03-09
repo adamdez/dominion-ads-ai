@@ -97,6 +97,11 @@ const SpinnerIcon = (
   </svg>
 );
 
+// TODO: No confirmation dialog before taking action. Consider adding a
+// confirmation step for high-risk recommendations (risk_level === 'red')
+// or for the "Ignore" action, which is harder to undo.
+// TODO: No undo mechanism. Once an action is taken, the operator must
+// contact engineering or use the database directly to reverse it.
 export function RecommendationActions({
   recommendationId,
   status,

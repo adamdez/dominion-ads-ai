@@ -7,6 +7,15 @@ const icons = {
       <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
     </svg>
   ),
+  proposals: (
+    <svg viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5">
+      <path
+        fillRule="evenodd"
+        d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm5 1.5V6a1 1 0 001 1h2.5L11 3.5zM6 11a1 1 0 011-1h.01a1 1 0 110 2H7a1 1 0 01-1-1zm0 3a1 1 0 011-1h.01a1 1 0 110 2H7a1 1 0 01-1-1zm3-3a1 1 0 011-1h3a1 1 0 110 2h-3a1 1 0 01-1-1zm0 3a1 1 0 011-1h3a1 1 0 110 2h-3a1 1 0 01-1-1z"
+        clipRule="evenodd"
+      />
+    </svg>
+  ),
   recommendations: (
     <svg viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5">
       <path
@@ -81,6 +90,11 @@ export function OperatorShell({ children }: OperatorShellProps) {
             href="/operator/dashboard"
             label="Dashboard"
             icon={icons.dashboard}
+          />
+          <NavLink
+            href="/operator/proposals"
+            label="Proposals"
+            icon={icons.proposals}
           />
           <NavLink
             href="/operator/recommendations"

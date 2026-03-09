@@ -51,6 +51,10 @@ export async function getPendingRecommendations(
 
 // Flexible query supporting optional status, market, and risk_level filters.
 // Used by the operator UI which needs to display all statuses (not just pending).
+//
+// TODO: As recommendation volume grows, consider server-side pagination
+// instead of a flat row limit. The current limit is generous for early
+// usage but will need cursor-based pagination at scale.
 const QUEUE_ROW_LIMIT = 200;
 
 export async function getRecommendations(

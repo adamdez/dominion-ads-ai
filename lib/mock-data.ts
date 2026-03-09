@@ -4,6 +4,10 @@ import type { Recommendation } from '@/types/recommendations';
  * Mock recommendations matching the real output shape from
  * ai/search-term-analyzer.ts buildRecommendations().
  *
+ * TODO: This file exists for dev/demo mode only. Remove or gate behind
+ * a feature flag once the system is fully wired to Supabase in all
+ * environments. Mock data should never be shown in production.
+ *
  * 10 entries covering:
  * - all recommendation types the analyzer produces
  * - both markets (spokane, kootenai)

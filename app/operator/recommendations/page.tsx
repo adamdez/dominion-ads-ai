@@ -9,29 +9,56 @@ export const metadata = {
   title: 'Recommendation Queue | Dominion Ads AI',
 };
 
-async function loadRecommendations(): Promise<Recommendation[]> {
-  // Fall back to mock data when Supabase is not configured.
-  // This keeps the UI functional during local development without a database.
+// ── Data source mode ─────────────────────────────────────────────
+// The UI must always tell the operator where the data came from.
+// 'live'     — fetched from Supabase successfully.
+// 'mock'     — Supabase env vars missing; using static mock data.
+// 'degraded' — Supabase configured but fetch failed; showing mock data as fallback.
+export type DataSourceMode = 'live' | 'mock' | 'degraded';
+
+interface LoadResult {
+  recommendations: Recommendation[];
+  mode: DataSourceMode;
+  /** Human-readable error message when mode === 'degraded'. */
+  error?: string;
+}
+
+async function loadRecommendations(): Promise<LoadResult> {
+  // ── Mock mode: Supabase not configured ──────────────────────────
+  // TODO: Remove mock fallback once Supabase is always configured in all environments.
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
     logger.warn('Supabase not configured — loading mock recommendations');
-    return mockRecommendations;
+    return { recommendations: mockRecommendations, mode: 'mock' };
   }
 
+  // ── Live mode: fetch from Supabase ──────────────────────────────
   try {
     const supabase = await createServerSupabaseClient();
+    // TODO: Consider server-side filtering by status='pending' to reduce payload.
+    // Currently loads all statuses so the operator can switch status filters client-side.
     const data = await getRecommendations(supabase);
-    return data;
-  } catch (err) {
-    logger.error('Failed to load recommendations from Supabase', {
-      error: err instanceof Error ? err.message : String(err),
-    });
-    // Degrade gracefully — show mock data so the operator UI isn't blank
-    return mockRecommendations;
+    return { recommendations: data, mode: 'live' };
+  } catch (err: unknown) {
+    // Supabase throws PostgrestError objects (plain objects with `.message`),
+    // not Error instances — handle both shapes.
+    const message =
+      err instanceof Error
+        ? err.message
+        : typeof err === 'object' && err !== null && 'message' in err
+          ? String((err as { message: unknown }).message)
+          : String(err);
+    logger.error('Failed to load recommendations from Supabase', { error: message });
+    // Degraded: show mock data so the operator UI isn't blank, but warn visibly.
+    return {
+      recommendations: mockRecommendations,
+      mode: 'degraded',
+      error: message,
+    };
   }
 }
 
 export default async function RecommendationsPage() {
-  const recommendations = await loadRecommendations();
+  const { recommendations, mode, error } = await loadRecommendations();
 
   return (
     <div>
@@ -48,7 +75,11 @@ export default async function RecommendationsPage() {
         </p>
       </div>
 
-      <RecommendationQueueClient initialRecommendations={recommendations} />
+      <RecommendationQueueClient
+        initialRecommendations={recommendations}
+        dataSourceMode={mode}
+        dataSourceError={error}
+      />
     </div>
   );
 }
