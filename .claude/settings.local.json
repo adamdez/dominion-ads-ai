@@ -42,7 +42,20 @@
       "Bash(git add .gitignore services/proposals/spokane-seller-search.ts app/operator/proposals/page.tsx app/operator/proposals/review-client.tsx .claude/settings.local.json DOMINION_ADS_STATUS.md app/api/proposals/ database/queries/proposals.ts)",
       "Bash(Investor\" with \"Local Spokane Buyer\", fix over-limit descriptions:*)",
       "Bash(git push origin main)",
-      "Bash(git add .claude/settings.local.json)"
+      "Bash(git add .claude/settings.local.json)",
+      "Bash(python3:*)",
+      "Bash(npm run build)",
+      "Bash(git add services/proposals/spokane-seller-search.ts LAUNCH_PACK.md)",
+      "Bash(git add LAUNCH_EXECUTION.md)",
+      "Bash(git add src/lib/tracking.ts src/app/analytics.tsx)",
+      "Bash(git add src/app/about/page.tsx src/app/analytics.tsx src/app/how-we-work/page.tsx \"src/app/neighborhoods/[slug]/page.tsx\" src/app/neighborhoods/page.tsx src/app/page.tsx src/app/sell/page.tsx)",
+      "Bash(git push)",
+      "Bash(grep -r \"favicon\\\\|apple-touch-icon\\\\|manifest.json\\\\|icons/\" \"C:\\\\Users\\\\adamd\\\\Desktop\\\\dominionhomedeals\\\\dominionhomedeals\" --include=\"*.html\" --include=\"*.tsx\" --include=\"*.ts\" --include=\"*.json\" ! -path \"*/node_modules/*\" ! -path \"*/.next/*\")",
+      "Bash(wc -c \"C:/Users/adamd/Desktop/dominion/logo1 \\(1\\).svg\")",
+      "Bash(head -5 \"C:/Users/adamd/Desktop/dominion/logo1 \\(1\\).svg\")",
+      "Bash(npx sharp-cli --version)",
+      "Bash(node -e \":*)",
+      "Bash(git add public/icons/apple-touch-icon.png public/icons/favicon-16x16.png public/icons/favicon-32x32.png public/icons/icon-192.png public/icons/icon-512.png src/app/layout.tsx)"
     ]
   }
 }
