@@ -1,0 +1,139 @@
+@import 'tailwindcss';
+
+/* ============================================================
+   Dominion Ads AI — Operator Console Design System
+   Dark-first. Mission control aesthetic. High signal density.
+   ============================================================ */
+
+@theme {
+  /* === Surface depth layers === */
+  --color-surface-950: #060911;
+  --color-surface-900: #0a0e17;
+  --color-surface-800: #0f1420;
+  --color-surface-700: #151b2b;
+  --color-surface-600: #1c2438;
+  --color-surface-500: #243049;
+  --color-surface-400: #2e3d5a;
+
+  /* === Text hierarchy === */
+  --color-text-primary: #e8ecf4;
+  --color-text-secondary: #94a3b8;
+  --color-text-muted: #64748b;
+  --color-text-dim: #475569;
+
+  /* === Risk levels — primary / bg / border === */
+  --color-risk-green: #34d399;
+  --color-risk-green-muted: #22c55e;
+  --color-risk-green-bg: rgba(34, 197, 94, 0.08);
+  --color-risk-green-border: rgba(34, 197, 94, 0.20);
+
+  --color-risk-yellow: #fbbf24;
+  --color-risk-yellow-muted: #eab308;
+  --color-risk-yellow-bg: rgba(234, 179, 8, 0.08);
+  --color-risk-yellow-border: rgba(234, 179, 8, 0.20);
+
+  --color-risk-red: #f87171;
+  --color-risk-red-muted: #ef4444;
+  --color-risk-red-bg: rgba(239, 68, 68, 0.08);
+  --color-risk-red-border: rgba(239, 68, 68, 0.20);
+
+  /* === Status === */
+  --color-status-pending: #94a3b8;
+  --color-status-approved: #34d399;
+  --color-status-testing: #a78bfa;
+  --color-status-ignored: #64748b;
+  --color-status-implemented: #22d3ee;
+  --color-status-expired: #78716c;
+
+  /* === Market accents === */
+  --color-market-spokane: #60a5fa;
+  --color-market-spokane-bg: rgba(96, 165, 250, 0.08);
+  --color-market-spokane-border: rgba(96, 165, 250, 0.20);
+  --color-market-kootenai: #a78bfa;
+  --color-market-kootenai-bg: rgba(167, 139, 250, 0.08);
+  --color-market-kootenai-border: rgba(167, 139, 250, 0.20);
+
+  /* === Action accents === */
+  --color-accent-approve: #34d399;
+  --color-accent-test: #a78bfa;
+  --color-accent-ignore: #64748b;
+  --color-accent-brand: #60a5fa;
+
+  /* === Typography === */
+  --font-display: 'Outfit', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'DM Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', 'Fira Code', ui-monospace, monospace;
+}
+
+/* === Base styles === */
+body {
+  @apply bg-surface-950 text-text-primary antialiased;
+  font-family: var(--font-sans);
+}
+
+/* === Glassmorphism panels === */
+.glass {
+  background: rgba(15, 20, 32, 0.65);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  border: 1px solid rgba(36, 48, 73, 0.45);
+}
+
+.glass-elevated {
+  background: rgba(21, 27, 43, 0.72);
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  border: 1px solid rgba(46, 61, 90, 0.40);
+}
+
+/* === Risk glow effects — used on high-priority cards === */
+.glow-green { box-shadow: 0 0 24px -4px rgba(34, 197, 94, 0.12), 0 0 4px rgba(34, 197, 94, 0.06); }
+.glow-yellow { box-shadow: 0 0 24px -4px rgba(234, 179, 8, 0.12), 0 0 4px rgba(234, 179, 8, 0.06); }
+.glow-red { box-shadow: 0 0 24px -4px rgba(239, 68, 68, 0.18), 0 0 6px rgba(239, 68, 68, 0.08); }
+
+/* === Scrollbar styling === */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(36, 48, 73, 0.6);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(46, 61, 90, 0.8);
+}
+
+/* === Noise texture overlay for depth === */
+.noise::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+/* === Subtle grid pattern for background depth === */
+.grid-pattern {
+  background-image:
+    linear-gradient(rgba(36, 48, 73, 0.15) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(36, 48, 73, 0.15) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+/* === Focus ring === */
+:focus-visible {
+  outline: 2px solid rgba(96, 165, 250, 0.5);
+  outline-offset: 2px;
+}
+
+/* === Selection === */
+::selection {
+  background: rgba(96, 165, 250, 0.25);
+  color: #e8ecf4;
+}
