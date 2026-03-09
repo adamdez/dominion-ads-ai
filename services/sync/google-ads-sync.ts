@@ -133,6 +133,9 @@ export async function runGoogleAdsSync(
 
     // ------------------------------------------------------------------
     // Stage 4: Search Terms
+    // Metrics are upserted (last-write-wins on the unique constraint).
+    // The search_terms table holds the latest synced snapshot, not
+    // cumulative history. Daily breakdowns live in daily_metrics.
     // ------------------------------------------------------------------
     const searchTerms = await adsClient.fetchSearchTerms(
       options.startDate,

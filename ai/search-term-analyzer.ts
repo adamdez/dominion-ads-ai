@@ -194,10 +194,13 @@ const JUNK_PATTERNS: RegExp[] = [
   /carpet\s+clean/,
 ];
 
+// Priority order matters. A search term that matches multiple categories
+// gets the first match:  seller > junk > agent > buyer > ambiguous.
+// Seller is first so terms like "sell my home" never fall into buyer/agent.
+// Junk is second so obvious irrelevant terms are caught before agent/buyer.
 export function classifyIntent(text: string): IntentLabel {
   const lower = text.toLowerCase();
 
-  // Seller intent checked first — these are our target searches
   for (const p of SELLER_INTENT_PATTERNS) {
     if (p.test(lower)) return 'seller_intent';
   }
@@ -295,14 +298,21 @@ function classifyTerm(term: SearchTerm): SearchTermAnalysis {
 // Negative keyword extraction
 // ============================================================
 
-// Words core to the business that should never be negatives
+// Words that must never be suggested as negatives.
+// These appear in both waste terms and valid seller-intent terms.
+// Example: "estate" appears in "real estate agent" (waste) AND "estate sale" (seller).
 const PROTECTED_WORDS = new Set([
-  'sell', 'house', 'home', 'property', 'buy', 'cash', 'fast', 'quick',
+  'sell', 'selling', 'house', 'home', 'property', 'buy', 'cash', 'fast', 'quick',
   'offer', 'need', 'want', 'my', 'your', 'we', 'get',
+  'sale', 'sales',           // "estate sale", "short sale" are seller-intent
+  'estate',                  // "estate sale" = probate lead
+  'short',                   // "short sale" = foreclosure lead
   'inherited', 'probate', 'foreclosure', 'divorce', 'vacant', 'rental',
   'landlord', 'tenant', 'repair', 'damage', 'mold', 'foundation',
+  'distressed', 'unwanted', 'ugly', 'abandoned',
   'spokane', 'coeur', 'dalene', 'idaho', 'washington', 'kootenai',
   'post', 'falls', 'liberty', 'lake', 'hayden', 'rathdrum',
+  'county', 'city',
 ]);
 
 const STOP_WORDS = new Set([
@@ -347,6 +357,8 @@ function extractNegativeKeywordSuggestions(
   for (const [bigram, data] of bigramCosts) {
     if (data.terms.size < 2) continue;
     const bigramWords = bigram.split(' ');
+    // Skip only if BOTH words are protected. A bigram like "house cleaning"
+    // is still valid (only "house" is protected; "cleaning" signals junk).
     if (bigramWords.every((w) => PROTECTED_WORDS.has(w))) continue;
     suggestions.push({
       keyword: bigram,
@@ -600,7 +612,7 @@ function buildRecommendations(
       related_campaign_id: null,
       related_ad_group_id: null,
       related_keyword_id: null,
-      related_search_term_id: null,
+      related_search_term_id: w.term_id,
       related_lead_id: null,
       metadata: {
         search_term: w.search_term,
@@ -621,6 +633,11 @@ function buildRecommendations(
 /**
  * Analyzes stored search term data to identify waste and opportunity.
  *
+ * IMPORTANT: Metrics on search_terms reflect the most recent sync date
+ * range, not cumulative history. Run the analyzer after each sync for
+ * accurate results. Historical per-date storage is a future improvement.
+ *
+ * Steps:
  * 1. Fetches search terms with metrics from the database
  * 2. Classifies each by intent (seller/buyer/agent/junk/ambiguous)
  * 3. Classifies seller situation where detectable
@@ -630,7 +647,8 @@ function buildRecommendations(
  * 7. Extracts new keyword suggestions from opportunity terms
  * 8. Detects landing page opportunities by seller situation
  * 9. Generates structured recommendations for the operator queue
- * 10. Persists classification flags back to the database
+ * 10. Persists classification flags back to the database for ALL
+ *     analyzed terms (waste, opportunity, and neutral)
  *
  * Rules-based. No ML. Every output is explainable.
  */
@@ -682,18 +700,18 @@ export async function analyzeSearchTerms(
     marketSummaries
   );
 
-  // Persist classifications back to DB
+  // Persist classifications back to DB for every analyzed term so the
+  // intent_label and flags stay current even if a term flips from waste
+  // to neutral between runs.
   let updateCount = 0;
   for (const a of analyses) {
-    if (a.classification === 'waste' || a.classification === 'opportunity' || a.seller_situation) {
-      await updateSearchTermClassification(supabase, a.term_id, {
-        is_waste: a.classification === 'waste',
-        is_opportunity: a.classification === 'opportunity',
-        intent_label: a.intent,
-        seller_situation: a.seller_situation ?? undefined,
-      });
-      updateCount++;
-    }
+    await updateSearchTermClassification(supabase, a.term_id, {
+      is_waste: a.classification === 'waste',
+      is_opportunity: a.classification === 'opportunity',
+      intent_label: a.intent,
+      ...(a.seller_situation ? { seller_situation: a.seller_situation } : {}),
+    });
+    updateCount++;
   }
 
   const totalWasteSpend = wasteTerms.reduce((s, t) => s + t.cost_micros, 0);

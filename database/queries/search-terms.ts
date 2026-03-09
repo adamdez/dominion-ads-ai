@@ -37,6 +37,10 @@ export async function upsertSearchTerm(
 // Analyzer queries
 // ---------------------------------------------------------------------------
 
+// Supabase default limit is 1000 rows. Set an explicit ceiling so we
+// don't silently truncate results from mid-size accounts.
+const ANALYSIS_ROW_LIMIT = 5000;
+
 export async function getSearchTermsForAnalysis(
   supabase: SupabaseClient,
   filters?: { market?: Market; minClicks?: number }
@@ -44,7 +48,8 @@ export async function getSearchTermsForAnalysis(
   let query = supabase
     .from('search_terms')
     .select('*')
-    .order('cost_micros', { ascending: false });
+    .order('cost_micros', { ascending: false })
+    .limit(ANALYSIS_ROW_LIMIT);
 
   if (filters?.market) {
     query = query.eq('market', filters.market);
