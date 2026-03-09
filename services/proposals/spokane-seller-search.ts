@@ -165,7 +165,7 @@ function buildSellerIntentGroup(): ProposalAdGroup {
       ],
       descriptions: [
         'Get a fair cash offer for your Spokane home. No repairs, no fees, close on your terms.',
-        'We buy houses in any condition across Spokane. Close on your timeline. Call or text today.',
+        'We buy houses in any condition in Spokane. Close on your timeline. Call or text today.',
         'Need to sell fast? We close in as few as 7 days. No commissions, no inspections required.',
         'Facing foreclosure or divorce? Local Spokane buyer makes fair cash offers. Call or text.',
       ],
@@ -212,7 +212,7 @@ function buildAsIsRepairsGroup(): ProposalAdGroup {
         'No Inspections Needed',              // 21
       ],
       descriptions: [
-        'Don\'t spend thousands on repairs. We buy Spokane homes in any condition. Cash offer today.',
+        'Don\'t spend thousands on repairs. We buy Spokane homes in any condition. Get a cash offer.',
         'Foundation, mold, or major damage? We buy it as-is. No repairs, no inspections required.',
         'Your fixer upper is worth cash today. We buy homes in any condition in Spokane County.',
         'Stop worrying about costly repairs. Get a fair cash offer for your as-is property now.',
